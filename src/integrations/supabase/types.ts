@@ -14,7 +14,60 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      submissions: {
+        Row: {
+          computed_score: number
+          created_at: string
+          id: string
+          submitted_tools: string[]
+        }
+        Insert: {
+          computed_score: number
+          created_at?: string
+          id?: string
+          submitted_tools: string[]
+        }
+        Update: {
+          computed_score?: number
+          created_at?: string
+          id?: string
+          submitted_tools?: string[]
+        }
+        Relationships: []
+      }
+      tools_reference: {
+        Row: {
+          category: string
+          created_at: string
+          eu_alternative: string
+          id: string
+          jurisdiction: string
+          risk_weight: number
+          source_note: string
+          tool_name: string
+        }
+        Insert: {
+          category: string
+          created_at?: string
+          eu_alternative: string
+          id?: string
+          jurisdiction: string
+          risk_weight: number
+          source_note: string
+          tool_name: string
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          eu_alternative?: string
+          id?: string
+          jurisdiction?: string
+          risk_weight?: number
+          source_note?: string
+          tool_name?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
