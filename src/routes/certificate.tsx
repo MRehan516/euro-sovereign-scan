@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { Loader2, Printer, ShieldCheck } from "lucide-react";
 
@@ -68,10 +68,7 @@ function CertificatePage() {
       .finally(() => {
         if (!cancelled) setPending(false);
       });
-    return () => {
-      cancelled = true;
-    };
-  }, [result, report, pending, write]);
+  }, [result, report, write]);
 
   if (!result || result.matched.length === 0) {
     return (
