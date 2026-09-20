@@ -60,7 +60,7 @@ flowchart LR
 - Tailwind CSS
 - Supabase (Postgres + Edge Functions)
 - LLM API (server-side call only)
-- Deployed via Lovable
+- Deployed as a managed web application
 
 ---
 
