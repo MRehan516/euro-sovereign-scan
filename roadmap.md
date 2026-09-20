@@ -5,4 +5,4 @@
 - [x] Refine the real-session certificate and retain working PDF export
 - [x] Verify scan and certificate empty states on desktop and mobile
 - [x] Run a real scan-to-report-to-certificate smoke test
-- [ ] Confirm branding cleanup, repository sync, and public deployment
+- [x] Confirm branding cleanup, repository sync, and public deployment
