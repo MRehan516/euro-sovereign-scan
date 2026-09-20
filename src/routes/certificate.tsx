@@ -35,14 +35,16 @@ function CertificatePage() {
   const result = session?.result ?? null;
   const report = session?.report ?? null;
   const [pending, setPending] = useState(false);
+  const [failure, setFailure] = useState<string | null>(null);
+  const [attempt, setAttempt] = useState(0);
   const started = useRef(false);
   const write = useServerFn(generateReport);
 
-  useEffect(() => {
-    if (!result || report || started.current || result.matched.length === 0) return;
-    started.current = true;
-    const cancelled = false;
+  const runGeneration = useCallback(() => {
+    if (!result || result.matched.length === 0) return;
+    setFailure(null);
     setPending(true);
+    setAttempt((n) => n + 1);
     write({
       data: {
         score: result.score,
@@ -57,17 +59,25 @@ function CertificatePage() {
       },
     })
       .then((res) => {
-        if (!cancelled) setScanReport(res.report);
+        setScanReport(res.report);
       })
       .catch((error: unknown) => {
-        if (!cancelled) {
-          toast.error(error instanceof Error ? error.message : "The report could not be generated.");
-        }
+        setFailure(
+          error instanceof Error
+            ? error.message
+            : "The report service could not be reached.",
+        );
       })
       .finally(() => {
-        if (!cancelled) setPending(false);
+        setPending(false);
       });
-  }, [result, report, write]);
+  }, [result, write]);
+
+  useEffect(() => {
+    if (!result || report || started.current || result.matched.length === 0) return;
+    started.current = true;
+    runGeneration();
+  }, [result, report, runGeneration]);
 
   if (!result || result.matched.length === 0) {
     return (
