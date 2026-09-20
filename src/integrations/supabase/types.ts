@@ -73,7 +73,21 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      get_tools_reference: {
+        Args: never
+        Returns: {
+          category: string
+          eu_alternative: string
+          jurisdiction: string
+          risk_weight: number
+          source_note: string
+          tool_name: string
+        }[]
+      }
+      log_submission: {
+        Args: { _computed_score: number; _submitted_tools: string[] }
+        Returns: string
+      }
     }
     Enums: {
       [_ in never]: never

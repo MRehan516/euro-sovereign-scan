@@ -8,6 +8,13 @@
       "when": 1789911891980,
       "tag": "0000_create_sovereigngate_schema",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1789917663222,
+      "tag": "0001_tighten_public_table_access",
+      "breakpoints": true
     }
   ]
 }
