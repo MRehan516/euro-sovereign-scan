@@ -36,11 +36,13 @@ function CertificatePage() {
   const result = session?.result ?? null;
   const report = session?.report ?? null;
   const [pending, setPending] = useState(false);
+  const started = useRef(false);
   const write = useServerFn(generateReport);
 
   useEffect(() => {
-    if (!result || report || pending || result.matched.length === 0) return;
-    let cancelled = false;
+    if (!result || report || started.current || result.matched.length === 0) return;
+    started.current = true;
+    const cancelled = false;
     setPending(true);
     write({
       data: {
