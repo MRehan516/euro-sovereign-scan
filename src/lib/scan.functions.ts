@@ -39,12 +39,11 @@ export const runScan = createServerFn({ method: "POST" })
 
     let submissionId: string | null = null;
     if (result.matched.length > 0) {
-      const { data: inserted } = await supabase
+      const id = crypto.randomUUID();
+      const { error: insertError } = await supabase
         .from("submissions")
-        .insert({ submitted_tools: inputs, computed_score: result.score })
-        .select("id")
-        .maybeSingle();
-      submissionId = inserted?.id ?? null;
+        .insert({ id, submitted_tools: inputs, computed_score: result.score });
+      if (!insertError) submissionId = id;
     }
 
     return { ...result, submissionId, createdAt: new Date().toISOString() };
