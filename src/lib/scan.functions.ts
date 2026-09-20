@@ -29,9 +29,7 @@ export const runScan = createServerFn({ method: "POST" })
     if (inputs.length === 0) throw new Error("Please enter at least one tool.");
 
     const supabase = serverSupabase();
-    const { data: rows, error } = await supabase
-      .from("tools_reference")
-      .select("tool_name, category, jurisdiction, eu_alternative, risk_weight, source_note");
+    const { data: rows, error } = await supabase.rpc("get_tools_reference");
 
     if (error) throw new Error("The reference dataset could not be read. Please try again.");
 
@@ -39,12 +37,13 @@ export const runScan = createServerFn({ method: "POST" })
 
     let submissionId: string | null = null;
     if (result.matched.length > 0) {
-      const id = crypto.randomUUID();
-      const { error: insertError } = await supabase
-        .from("submissions")
-        .insert({ id, submitted_tools: inputs, computed_score: result.score });
-      if (!insertError) submissionId = id;
+      const { data: loggedId, error: insertError } = await supabase.rpc("log_submission", {
+        _submitted_tools: inputs,
+        _computed_score: result.score,
+      });
+      if (!insertError && typeof loggedId === "string") submissionId = loggedId;
     }
+
 
     return { ...result, submissionId, createdAt: new Date().toISOString() };
   });
