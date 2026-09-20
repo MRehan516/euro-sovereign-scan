@@ -7,7 +7,7 @@ import { ArrowRight, Loader2 } from "lucide-react";
 import { Page, PageHeader } from "@/components/ui/page";
 import { ScoreGauge } from "@/components/ScoreGauge";
 import { runScan } from "@/lib/scan.functions";
-import { setScanResult, useScanSession } from "@/lib/scan-store";
+import { clearScan, setScanResult, useScanSession } from "@/lib/scan-store";
 import { CATEGORY_WEIGHTS, OTHER_CATEGORY_WEIGHT, riskLabel, type RiskLevel } from "@/lib/scoring";
 
 export const Route = createFileRoute("/scan")({
@@ -149,9 +149,7 @@ function ScanPage() {
             calculated.
           </h2>
           <p className="mx-auto mt-4 max-w-2xl text-body text-muted-foreground">
-            We looked for {result.unmatched.length === 1 ? "“" : "“"}
-            {result.unmatched.join("”, ")}
-            {result.unmatched.length === 1 ? "”" : "”"} and found no match. This is not a score of zero —
+            We looked for “{result.unmatched.join("”, ")}” and found no match. This is not a score of zero —
             your stack simply has not been assessed, and no findings are shown.
           </p>
           <p className="mx-auto mt-3 max-w-2xl text-meta text-muted-foreground">
