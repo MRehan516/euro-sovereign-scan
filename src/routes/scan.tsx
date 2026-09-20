@@ -107,6 +107,37 @@ function ScanPage() {
         </button>
       </form>
 
+      {!result ? (
+        <section className="mt-10">
+          <p className="eyebrow">What happens when you submit</p>
+          <div className="mt-4 grid gap-4 md:grid-cols-3">
+            <div className="surface-card p-6">
+              <p className="text-[15px] font-semibold">Each name is matched, not guessed</p>
+              <p className="mt-2 text-meta text-muted-foreground">
+                Your entries are compared against the curated jurisdiction dataset. Anything we do not
+                recognise is listed openly and left out of the score rather than assumed.
+              </p>
+            </div>
+            <div className="surface-card p-6">
+              <p className="text-[15px] font-semibold">The score is computed live</p>
+              <p className="mt-2 text-meta text-muted-foreground">
+                Category averages are weighted — Cloud 30%, AI/LLM 25%, Email, Communications and CRM 15%
+                each — and renormalised for the categories you actually use. The full formula is shown with
+                your results.
+              </p>
+            </div>
+            <div className="surface-card p-6">
+              <p className="text-[15px] font-semibold">Then a written report, if you want one</p>
+              <p className="mt-2 text-meta text-muted-foreground">
+                From the results you can generate an advisor-style report on your three priority migrations
+                and an exportable assurance certificate. No account, no integration, no access to your
+                systems.
+              </p>
+            </div>
+          </div>
+        </section>
+      ) : null}
+
       {result ? (
         <div className="mt-12 space-y-10">
           <section className="surface-card animate-in fade-in slide-in-from-bottom-2 duration-500 grid gap-10 p-10 md:grid-cols-[auto_1fr] md:items-center">
