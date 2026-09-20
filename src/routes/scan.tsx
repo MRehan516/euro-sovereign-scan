@@ -32,10 +32,10 @@ export const Route = createFileRoute("/scan")({
   component: ScanPage,
 });
 
-const RISK_STYLE: Record<RiskLevel, string> = {
-  low: "bg-sage-soft text-sage",
-  medium: "bg-amber-soft text-amber",
-  high: "bg-brick-soft text-brick",
+const RISK_PILL: Record<RiskLevel, string> = {
+  low: "border-sage/30 bg-sage-soft text-sage",
+  medium: "border-amber/30 bg-amber-soft text-amber",
+  high: "border-brick/30 bg-brick-soft text-brick",
 };
 
 const BAR_COLOR: Record<RiskLevel, string> = {
@@ -109,10 +109,10 @@ function ScanPage() {
 
       {result ? (
         <div className="mt-12 space-y-10">
-          <section className="surface-card grid gap-8 p-8 md:grid-cols-[auto_1fr] md:items-center">
-            <ScoreGauge score={result.score} />
+          <section className="surface-card animate-in fade-in slide-in-from-bottom-2 duration-500 grid gap-10 p-10 md:grid-cols-[auto_1fr] md:items-center">
+            <ScoreGauge score={result.score} size={300} />
             <div>
-              <h2 className="font-display text-[30px] leading-tight font-semibold">Your sovereignty score</h2>
+              <p className="eyebrow">Your sovereignty score</p>
               <p className="mt-3 text-body text-muted-foreground">
                 Computed from {result.matched.length} matched{" "}
                 {result.matched.length === 1 ? "tool" : "tools"} across {result.categories.length}{" "}
@@ -139,12 +139,12 @@ function ScanPage() {
           </section>
 
           {result.categories.length > 0 ? (
-            <section className="surface-card p-8">
-              <h2 className="font-display text-[30px] leading-tight font-semibold">Category breakdown</h2>
-              <p className="mt-2 text-body text-muted-foreground">
+            <section className="surface-card animate-in fade-in slide-in-from-bottom-2 duration-500 p-8">
+              <h2 className="font-display text-[22px] leading-tight font-semibold">Category breakdown</h2>
+              <p className="mt-2 text-meta text-muted-foreground">
                 Each bar is the average sovereignty of the tools you listed in that category.
               </p>
-              <div className="mt-7 space-y-5">
+              <div className="mt-6 space-y-4">
                 {result.categories.map((c) => {
                   const tone = barTone(c.score);
                   return (
@@ -169,8 +169,8 @@ function ScanPage() {
             </section>
           ) : null}
 
-          <section className="surface-card p-8">
-            <h2 className="font-display text-[30px] leading-tight font-semibold">The formula, in the open</h2>
+          <section className="surface-card animate-in fade-in slide-in-from-bottom-2 duration-500 p-8">
+            <h2 className="font-display text-[22px] leading-tight font-semibold">The formula, in the open</h2>
             <div className="mt-4 space-y-4 text-body text-muted-foreground">
               <p>
                 Every tool in the reference dataset carries a risk weight between 0.05 and 0.95, reflecting how
@@ -202,48 +202,28 @@ function ScanPage() {
           </section>
 
           {result.matched.length > 0 ? (
-            <section className="surface-card overflow-hidden">
-              <div className="p-8 pb-4">
-                <h2 className="font-display text-[30px] leading-tight font-semibold">Tool-by-tool findings</h2>
-              </div>
-              <div className="overflow-x-auto">
-                <table className="w-full min-w-[820px] border-collapse text-left">
-                  <thead>
-                    <tr className="border-y border-border bg-secondary/60">
-                      {["Tool", "Category", "Jurisdiction", "Risk", "Suggested EU alternative"].map((h) => (
-                        <th key={h} className="px-6 py-3 text-meta font-bold tracking-wide text-muted-foreground">
-                          {h.toUpperCase()}
-                        </th>
-                      ))}
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {result.matched.map((tool) => (
-                      <tr key={tool.input} className="border-b border-border last:border-0 align-top">
-                        <td className="px-6 py-4">
-                          <span className="text-[15px] font-semibold text-foreground">{tool.tool_name}</span>
-                          <span className="mt-1 block max-w-[22rem] text-meta text-muted-foreground">
-                            {tool.source_note}
-                          </span>
-                        </td>
-                        <td className="px-6 py-4 text-[15px] text-muted-foreground">{tool.category}</td>
-                        <td className="px-6 py-4 text-[15px] text-muted-foreground">{tool.jurisdiction}</td>
-                        <td className="px-6 py-4">
-                          <span
-                            className={`inline-block rounded-full px-3 py-1 text-meta font-bold ${RISK_STYLE[tool.risk]}`}
-                          >
-                            {riskLabel(tool.risk)}
-                          </span>
-                          <span className="mt-1 block text-meta text-muted-foreground">
-                            {tool.toolScore}/100
-                          </span>
-                        </td>
-                        <td className="px-6 py-4 text-[15px] text-muted-foreground">{tool.eu_alternative}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
+            <section className="surface-card animate-in fade-in slide-in-from-bottom-2 duration-500 p-8">
+              <h2 className="font-display text-[22px] leading-tight font-semibold">Tool-by-tool findings</h2>
+              <p className="mt-1 text-meta text-muted-foreground">
+                One line per tool, with its risk level colour-coded.
+              </p>
+              <ul className="mt-5 divide-y divide-border">
+                {result.matched.map((tool) => (
+                  <li key={tool.input} className="flex flex-wrap items-baseline gap-x-3 gap-y-1 py-3.5">
+                    <span className="text-[15px] font-semibold text-foreground">{tool.tool_name}</span>
+                    <span
+                      className={`inline-block rounded-full border px-2.5 py-0.5 text-[11px] font-bold tracking-wide uppercase ${RISK_PILL[tool.risk]}`}
+                    >
+                      {riskLabel(tool.risk)}
+                    </span>
+                    <span className="ml-auto text-meta text-muted-foreground">{tool.toolScore}/100</span>
+                    <span className="w-full text-meta text-muted-foreground">
+                      {tool.category} · {tool.jurisdiction} · Suggested EU alternative: {tool.eu_alternative}
+                    </span>
+                    <span className="w-full text-meta text-muted-foreground/75">{tool.source_note}</span>
+                  </li>
+                ))}
+              </ul>
             </section>
           ) : null}
         </div>
