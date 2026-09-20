@@ -4,13 +4,13 @@ import { ListChecks, Gauge, Stamp, ArrowRight, Scale, Server, Brain } from "luci
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "SovereignGate — Score your stack for EU digital sovereignty" },
+      { title: "SovereignGate — Digital Sovereignty Assurance" },
       {
         name: "description",
         content:
           "List the tools your company uses and get a sovereignty score out of 100, an AI assurance report and a formal certificate.",
       },
-      { property: "og:title", content: "SovereignGate — Score your stack for EU digital sovereignty" },
+      { property: "og:title", content: "SovereignGate — Digital Sovereignty Assurance" },
       {
         property: "og:description",
         content:

@@ -5,6 +5,6 @@
 - [x] Verify existing certificate PDF action
 - [x] Audit and adjust text contrast only where necessary
 - [x] Remove non-functional platform branding and generated README copy
-- [ ] Smoke-test all pages and the full scan-to-certificate flow
+- [x] Smoke-test all pages and the full scan-to-certificate flow
 - [ ] Publish and verify the public URL
-- [ ] Confirm repository sync status
+- [x] Confirm repository sync status
