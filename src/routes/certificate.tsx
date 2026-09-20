@@ -1,8 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
-import { useEffect, useRef, useState } from "react";
-import { toast } from "sonner";
-import { Loader2, Printer, ShieldCheck } from "lucide-react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { AlertTriangle, Loader2, Printer, RotateCcw, ShieldCheck } from "lucide-react";
 
 import { Page, PageHeader } from "@/components/ui/page";
 import { generateReport } from "@/lib/scan.functions";
@@ -36,14 +35,16 @@ function CertificatePage() {
   const result = session?.result ?? null;
   const report = session?.report ?? null;
   const [pending, setPending] = useState(false);
+  const [failure, setFailure] = useState<string | null>(null);
+  const [attempt, setAttempt] = useState(0);
   const started = useRef(false);
   const write = useServerFn(generateReport);
 
-  useEffect(() => {
-    if (!result || report || started.current || result.matched.length === 0) return;
-    started.current = true;
-    const cancelled = false;
+  const runGeneration = useCallback(() => {
+    if (!result || result.matched.length === 0) return;
+    setFailure(null);
     setPending(true);
+    setAttempt((n) => n + 1);
     write({
       data: {
         score: result.score,
@@ -58,17 +59,25 @@ function CertificatePage() {
       },
     })
       .then((res) => {
-        if (!cancelled) setScanReport(res.report);
+        setScanReport(res.report);
       })
       .catch((error: unknown) => {
-        if (!cancelled) {
-          toast.error(error instanceof Error ? error.message : "The report could not be generated.");
-        }
+        setFailure(
+          error instanceof Error
+            ? error.message
+            : "The report service could not be reached.",
+        );
       })
       .finally(() => {
-        if (!cancelled) setPending(false);
+        setPending(false);
       });
-  }, [result, report, write]);
+  }, [result, write]);
+
+  useEffect(() => {
+    if (!result || report || started.current || result.matched.length === 0) return;
+    started.current = true;
+    runGeneration();
+  }, [result, report, runGeneration]);
 
   if (!result || result.matched.length === 0) {
     return (
@@ -102,11 +111,29 @@ function CertificatePage() {
       />
 
       <section className="surface-card p-8">
-        {pending && !report ? (
-          <p className="flex items-center gap-3 text-body text-muted-foreground">
-            <Loader2 className="size-4 animate-spin" />
-            Writing your assurance report…
-          </p>
+        {pending ? (
+          <div className="max-w-3xl">
+            <p className="eyebrow flex items-center gap-2 text-accent">
+              <Loader2 className="size-3.5 animate-spin" />
+              Generating report — live
+            </p>
+            <p className="mt-3 text-body text-muted-foreground">
+              Writing your assurance report from the {result.matched.length} tools matched in this scan.
+              This takes up to a minute; nothing is pre-written or cached.
+            </p>
+            <div className="mt-6 space-y-3" aria-hidden>
+              {[92, 100, 84].map((w, i) => (
+                <div
+                  key={i}
+                  className="h-3 animate-pulse rounded bg-border"
+                  style={{ width: `${w}%`, animationDelay: `${i * 150}ms` }}
+                />
+              ))}
+            </div>
+            {attempt > 1 ? (
+              <p className="mt-4 text-meta text-muted-foreground">Retry attempt {attempt}.</p>
+            ) : null}
+          </div>
         ) : report ? (
           <div className="max-w-3xl space-y-4 text-body text-foreground/85">
             {report.split(/\n{2,}/).map((para, i) => (
@@ -116,10 +143,27 @@ function CertificatePage() {
             ))}
           </div>
         ) : (
-          <p className="text-body text-muted-foreground">
-            The report is not available right now. Your score, breakdown and certificate below remain valid —
-            you can retry by running the scan again.
-          </p>
+          <div className="max-w-3xl">
+            <p className="eyebrow flex items-center gap-2 text-brick">
+              <AlertTriangle className="size-3.5" />
+              Report generation failed
+            </p>
+            <p className="mt-3 text-body text-foreground/85">
+              {failure ?? "The report service could not be reached."}
+            </p>
+            <p className="mt-2 text-body text-muted-foreground">
+              No substitute text has been written in its place. Your score, category breakdown and
+              certificate below are computed from the database and remain valid.
+            </p>
+            <button
+              type="button"
+              onClick={runGeneration}
+              className="mt-6 inline-flex items-center gap-2 rounded-md bg-accent px-6 py-3 text-[15px] font-semibold text-accent-foreground transition-opacity hover:opacity-90 print:hidden"
+            >
+              <RotateCcw className="size-4" />
+              Retry report generation
+            </button>
+          </div>
         )}
       </section>
 
