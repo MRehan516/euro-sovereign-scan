@@ -141,7 +141,35 @@ function ScanPage() {
         </section>
       ) : null}
 
-      {result ? (
+      {result && result.matched.length === 0 ? (
+        <section className="mt-12 surface-card animate-in fade-in slide-in-from-bottom-2 duration-500 p-8 text-center sm:p-10">
+          <p className="eyebrow">Nothing to score yet</p>
+          <h2 className="mt-3 font-display text-[22px] leading-tight font-semibold">
+            None of the tools you entered are in our reference dataset yet, so no score could be
+            calculated.
+          </h2>
+          <p className="mx-auto mt-4 max-w-2xl text-body text-muted-foreground">
+            We looked for {result.unmatched.length === 1 ? "“" : "“"}
+            {result.unmatched.join("”, ")}
+            {result.unmatched.length === 1 ? "”" : "”"} and found no match. This is not a score of zero —
+            your stack simply has not been assessed, and no findings are shown.
+          </p>
+          <p className="mx-auto mt-3 max-w-2xl text-meta text-muted-foreground">
+            The reference dataset is curated and grows over time; none of the entries above are recognised
+            in it yet.
+          </p>
+          <button
+            type="button"
+            onClick={() => {
+              clearScan();
+              setValue("");
+            }}
+            className="mt-6 inline-flex items-center gap-2 rounded-md bg-accent px-5 py-3 text-[15px] font-semibold text-accent-foreground transition-opacity hover:opacity-90"
+          >
+            Try again with a different list
+          </button>
+        </section>
+      ) : result ? (
         <div className="mt-12 space-y-10">
           <section className="surface-card animate-in fade-in slide-in-from-bottom-2 duration-500 px-6 py-10 text-center sm:px-10">
             <p className="eyebrow">Your sovereignty score</p>
