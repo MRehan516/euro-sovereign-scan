@@ -81,6 +81,10 @@ function ScoringPage() {
           to sum to 100%. A company that lists only cloud and AI tools is scored on cloud and AI, not penalised
           for silence.
         </p>
+        <p className="text-meta text-muted-foreground">
+          Reference dataset revision 2026.1 · Last reviewed 20 September 2026. The dataset is curated and expands
+          as providers, ownership structures and European alternatives change.
+        </p>
 
         <SectionTitle>Why jurisdiction and data sensitivity matter</SectionTitle>
         <p>

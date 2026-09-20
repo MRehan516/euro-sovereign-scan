@@ -109,6 +109,9 @@ function ScanPage() {
 
       {!result ? (
         <section className="mt-10">
+          <p className="mb-6 text-meta text-muted-foreground">
+            Your score and findings will appear here after your first scan.
+          </p>
           <p className="eyebrow">What happens when you submit</p>
           <div className="mt-4 grid gap-4 md:grid-cols-3">
             <div className="surface-card p-6">

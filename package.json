@@ -1,5 +1,6 @@
 {
-  "name": "tanstack_start_ts",
+  "name": "sovereigngate",
+  "description": "Digital sovereignty assurance for European software stacks.",
   "private": true,
   "sideEffects": false,
   "type": "module",
