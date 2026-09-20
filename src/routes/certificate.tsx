@@ -28,7 +28,7 @@ export const Route = createFileRoute("/certificate")({
       { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
-  component: CertificatePage;
+  component: CertificatePage,
 });
 
 function CertificatePage() {
