@@ -1,10 +1,8 @@
 # Roadmap
 
-- [x] Add favicon and complete sharing metadata
-- [x] Add pre-scan guidance and scoring dataset note
-- [x] Verify existing certificate PDF action
-- [x] Audit and adjust text contrast only where necessary
-- [x] Remove non-functional platform branding and generated README copy
-- [x] Smoke-test all pages and the full scan-to-certificate flow
-- [x] Publish and verify the public URL
-- [x] Confirm repository sync status
+- [x] Strengthen the scan-results score hierarchy and transition to the live report
+- [x] Present the live assurance report as a distinct written memo
+- [x] Refine the real-session certificate and retain working PDF export
+- [x] Verify scan and certificate empty states on desktop and mobile
+- [x] Run a real scan-to-report-to-certificate smoke test
+- [ ] Confirm branding cleanup, repository sync, and public deployment

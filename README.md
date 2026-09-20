@@ -32,7 +32,7 @@ This is a decision-support tool, not legal advice, and the reference dataset is 
 
 ```mermaid
 flowchart LR
-    U["User (browser)"] -->|"Lists their SaaS/cloud tools"| FE["SovereignGate Frontend\n(React + Tailwind, built in Lovable)"]
+    U["User (browser)"] -->|"Lists their SaaS/cloud tools"| FE["SovereignGate Frontend\n(React + Tailwind)"]
     FE -->|"Read reference dataset"| DB[("Supabase Postgres\ntools_reference table\n(tool, category, jurisdiction, EU_alternative, risk_weight)")]
     FE -->|"Compute score client-side\nfrom real matched rows"| SCORE["Live Scoring Engine\n(weighted rubric, transparent formula)"]
     SCORE -->|"Matched tools + score payload"| EDGE["Supabase Edge Function\n(server-side, holds the LLM API key)"]
@@ -60,7 +60,7 @@ flowchart LR
 - Tailwind CSS
 - Supabase (Postgres + Edge Functions)
 - LLM API (server-side call only)
-- Deployed via Lovable
+- Deployed as a managed web application
 
 ---
 
