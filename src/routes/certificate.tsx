@@ -1,8 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
-import { useEffect, useRef, useState } from "react";
-import { toast } from "sonner";
-import { Loader2, Printer, ShieldCheck } from "lucide-react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { AlertTriangle, Loader2, Printer, RotateCcw, ShieldCheck } from "lucide-react";
 
 import { Page, PageHeader } from "@/components/ui/page";
 import { generateReport } from "@/lib/scan.functions";
