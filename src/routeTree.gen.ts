@@ -10,11 +10,30 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AboutRouteImport } from './routes/about'
+import { Route as CertificateRouteImport } from './routes/certificate'
+import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as ScanRouteImport } from './routes/scan'
+import { Route as ScoringRouteImport } from './routes/scoring'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AboutRoute = AboutRouteImport.update({
+  id: '/about',
+  path: '/about',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CertificateRoute = CertificateRouteImport.update({
+  id: '/certificate',
+  path: '/certificate',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PrivacyRoute = PrivacyRouteImport.update({
+  id: '/privacy',
+  path: '/privacy',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ScanRoute = ScanRouteImport.update({
@@ -22,31 +41,59 @@ const ScanRoute = ScanRouteImport.update({
   path: '/scan',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ScoringRoute = ScoringRouteImport.update({
+  id: '/scoring',
+  path: '/scoring',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/about': typeof AboutRoute
+  '/certificate': typeof CertificateRoute
+  '/privacy': typeof PrivacyRoute
   '/scan': typeof ScanRoute
+  '/scoring': typeof ScoringRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/about': typeof AboutRoute
+  '/certificate': typeof CertificateRoute
+  '/privacy': typeof PrivacyRoute
   '/scan': typeof ScanRoute
+  '/scoring': typeof ScoringRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/about': typeof AboutRoute
+  '/certificate': typeof CertificateRoute
+  '/privacy': typeof PrivacyRoute
   '/scan': typeof ScanRoute
+  '/scoring': typeof ScoringRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/scan'
+  fullPaths: '/' | '/about' | '/certificate' | '/privacy' | '/scan' | '/scoring'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/scan'
-  id: '__root__' | '/' | '/scan'
+  to: '/' | '/about' | '/certificate' | '/privacy' | '/scan' | '/scoring'
+  id:
+    | '__root__'
+    | '/'
+    | '/about'
+    | '/certificate'
+    | '/privacy'
+    | '/scan'
+    | '/scoring'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AboutRoute: typeof AboutRoute
+  CertificateRoute: typeof CertificateRoute
+  PrivacyRoute: typeof PrivacyRoute
   ScanRoute: typeof ScanRoute
+  ScoringRoute: typeof ScoringRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -58,6 +105,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/about': {
+      id: '/about'
+      path: '/about'
+      fullPath: '/about'
+      preLoaderRoute: typeof AboutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/certificate': {
+      id: '/certificate'
+      path: '/certificate'
+      fullPath: '/certificate'
+      preLoaderRoute: typeof CertificateRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/privacy': {
+      id: '/privacy'
+      path: '/privacy'
+      fullPath: '/privacy'
+      preLoaderRoute: typeof PrivacyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/scan': {
       id: '/scan'
       path: '/scan'
@@ -65,12 +133,23 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ScanRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/scoring': {
+      id: '/scoring'
+      path: '/scoring'
+      fullPath: '/scoring'
+      preLoaderRoute: typeof ScoringRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AboutRoute: AboutRoute,
+  CertificateRoute: CertificateRoute,
+  PrivacyRoute: PrivacyRoute,
   ScanRoute: ScanRoute,
+  ScoringRoute: ScoringRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
