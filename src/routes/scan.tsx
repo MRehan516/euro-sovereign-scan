@@ -143,11 +143,13 @@ function ScanPage() {
 
       {result ? (
         <div className="mt-12 space-y-10">
-          <section className="surface-card animate-in fade-in slide-in-from-bottom-2 duration-500 grid gap-10 p-10 md:grid-cols-[auto_1fr] md:items-center">
-            <ScoreGauge score={result.score} size={300} />
-            <div>
-              <p className="eyebrow">Your sovereignty score</p>
-              <p className="mt-3 text-body text-muted-foreground">
+          <section className="surface-card animate-in fade-in slide-in-from-bottom-2 duration-500 px-6 py-10 text-center sm:px-10">
+            <p className="eyebrow">Your sovereignty score</p>
+            <div className="mt-5 flex justify-center">
+              <ScoreGauge score={result.score} size={300} />
+            </div>
+            <div className="mx-auto mt-6 max-w-2xl">
+              <p className="text-body text-muted-foreground">
                 Computed from {result.matched.length} matched{" "}
                 {result.matched.length === 1 ? "tool" : "tools"} across {result.categories.length}{" "}
                 {result.categories.length === 1 ? "category" : "categories"} on{" "}
@@ -161,13 +163,19 @@ function ScanPage() {
                 </p>
               ) : null}
               {result.matched.length > 0 ? (
-                <Link
-                  to="/certificate"
-                  className="mt-6 inline-flex items-center gap-2 rounded-md bg-accent px-5 py-3 text-[15px] font-semibold text-accent-foreground transition-opacity hover:opacity-90"
-                >
-                  Generate assurance report &amp; certificate
-                  <ArrowRight className="size-4" />
-                </Link>
+                <div className="mt-7 border-t border-border pt-6">
+                  <p className="text-[15px] font-semibold text-foreground">Your findings are ready.</p>
+                  <p className="mt-1 text-meta text-muted-foreground">
+                    Continue to generate your live assurance memo and session certificate.
+                  </p>
+                  <Link
+                    to="/certificate"
+                    className="mt-4 inline-flex items-center gap-2 rounded-md bg-accent px-5 py-3 text-[15px] font-semibold text-accent-foreground transition-opacity hover:opacity-90"
+                  >
+                    Generate assurance report &amp; certificate
+                    <ArrowRight className="size-4" />
+                  </Link>
+                </div>
               ) : null}
             </div>
           </section>

@@ -110,13 +110,16 @@ function CertificatePage() {
         intro="Written from the tools you listed, the jurisdictions they sit in and the weight each category carries in the score."
       />
 
-      <section className="surface-card p-8">
+      <section className="border-y border-border bg-surface px-6 py-10 sm:px-10">
         {pending ? (
-          <div className="max-w-3xl">
+          <div className="mx-auto max-w-3xl">
             <p className="eyebrow flex items-center gap-2 text-accent">
               <Loader2 className="size-3.5 animate-spin" />
               Generating report — live
             </p>
+            <h2 className="mt-4 font-display text-[30px] leading-tight font-semibold text-foreground">
+              Your report is being prepared
+            </h2>
             <p className="mt-3 text-body text-muted-foreground">
               Writing your assurance report from the {result.matched.length} tools matched in this scan.
               This takes up to a minute; nothing is pre-written or cached.
@@ -135,15 +138,21 @@ function CertificatePage() {
             ) : null}
           </div>
         ) : report ? (
-          <div className="max-w-3xl space-y-4 text-body text-foreground/85">
-            {report.split(/\n{2,}/).map((para, i) => (
-              <p key={i} className="whitespace-pre-line">
-                {para.trim()}
-              </p>
-            ))}
+          <div className="mx-auto max-w-3xl">
+            <p className="eyebrow text-accent">Your report is ready</p>
+            <h2 className="mt-4 font-display text-[30px] leading-tight font-semibold text-foreground">
+              Priority migration memo
+            </h2>
+            <div className="mt-6 space-y-5 border-l-2 border-accent pl-6 text-body leading-7 text-foreground/85 sm:pl-8">
+              {report.split(/\n{2,}/).map((para, i) => (
+                <p key={i} className="whitespace-pre-line">
+                  {para.trim()}
+                </p>
+              ))}
+            </div>
           </div>
         ) : (
-          <div className="max-w-3xl">
+          <div className="mx-auto max-w-3xl">
             <p className="eyebrow flex items-center gap-2 text-brick">
               <AlertTriangle className="size-3.5" />
               Report generation failed
@@ -208,12 +217,14 @@ function CertificatePage() {
             </div>
           </div>
 
-          <p className="mx-auto mt-7 max-w-2xl text-body text-foreground/85">
+          <p className="mx-auto mt-7 max-w-2xl text-body font-semibold text-foreground/85">
             {result.matched.length} tools were assessed across{" "}
             {result.categories.map((c) => c.category).join(", ")}.{" "}
             {highRisk > 0
               ? `${highRisk} ${highRisk === 1 ? "tool carries" : "tools carry"} high third-country exposure and should be prioritised for migration.`
-              : "No assessed tool carries high third-country exposure."}{" "}
+              : "No assessed tool carries high third-country exposure."}
+          </p>
+          <p className="mx-auto mt-3 max-w-2xl text-meta text-muted-foreground">
             This certificate records a point-in-time self-assessment and is decision-support, not a regulatory
             certification or legal advice.
           </p>
