@@ -1,86 +1,137 @@
-# Sovereign Shield
+# SovereignGate
 
-Build a web app called "SovereignGate" — an AI Digital Sovereignty Assurance tool for European companies.
+**An AI-powered Digital Sovereignty Assurance tool for European companies.**
 
-DESIGN SYSTEM (do not use generic Lovable defaults — this must look intentional and distinctive):
+SovereignGate takes the list of software and cloud tools a company actually uses, matches every tool against a curated reference dataset of jurisdictions, sub-processors, and verified EU alternatives, and returns three things: a transparent Digital Sovereignty Score, a live AI-generated migration report, and a downloadable Assurance Certificate.
 
-- Light theme only.
+**Live app:** https://euro-sovereign-scan.lovable.app
 
-- Color palette: deep ink-navy (#0B1E3D) for primary text and headers, a single confident accent color of cobalt-electric blue (#2454FF) for primary actions and key data highlights, a warm off-white background (#F7F5F0 — not pure white, not gray), and a muted sage-green (#4C7A6D) as a secondary accent used only for "positive/compliant" states. Use a warning amber (#B8752B) only for medium-risk states and a muted brick-red (#A83A32) only for high-risk states — never bright red.
+---
 
-- Typography: headline font is a distinctive serif (e.g. "Fraunces" or "Newsreader" from Google Fonts) for H1/H2 only, to feel authoritative and European rather than generic startup-sans. Body text and UI elements use a clean grotesk sans (e.g. "Inter" or "Manrope"). Type scale must clearly step down by section: H1 ~40-48px, H2 ~28-32px, H3 ~20-22px, body ~16px, small/meta text ~13px. Never use the same font size for a heading and its body copy.
+## What it does
 
-- Layout: persistent left sidebar (not a top navbar) with sections: Home, Run a Scan, My Certificate, How Scoring Works, About, Privacy Policy. Sidebar has clear active-state highlighting, icons next to each label, and collapses to icon-only on smaller screens.
+1. A user lists the tools their company runs on (e.g. `AWS, Slack, Google Workspace, HubSpot`).
+2. Every tool is matched against a real, curated reference database — not a hardcoded list in the frontend — of category, jurisdiction, risk weight, and a verified EU alternative.
+3. A transparent, weighted scoring engine computes an overall **Sovereignty Score out of 100**, broken down by category: Cloud, Email, AI/LLM, Communications, CRM. The formula itself is shown on screen — nothing is a hidden black box.
+4. A server-side call to an LLM generates a plain-language **Assurance Report**, explaining the top priority migrations and why — constrained to only recommend tools that exist in the verified dataset, so it can't invent a vendor that doesn't exist.
+5. A timestamped, exportable **Digital Sovereignty Assurance Certificate** is issued — something a company could genuinely keep in a compliance folder or a procurement bid, not just a decorative results screen.
 
-- No placeholder text, no lorem ipsum, no "Company Name" or "Lorem" anywhere — every page must ship with real, finished, professional copy about SovereignGate itself.
+Every score and report is computed live, per submission — there are no pre-filled example results anywhere in the app.
 
-PAGES TO BUILD, FULLY COMPLETE, NO STUBS:
+---
 
-1. HOME / LANDING PAGE
+## Why this exists
 
-   - Hero headline explaining the product in one sentence, subheadline explaining the mechanism (score + AI report + certificate), a single clear "Run a Free Scan" call-to-action button.
+Most European companies cannot quickly answer a basic question about themselves: how dependent are they, right now, on non-EU cloud and software providers? The tools that exist to help with this today are static directories — useful, but they require the user to already know what they're looking for, and they give the same flat list to everyone regardless of their actual stack. SovereignGate is personalized, scored, and prioritized instead of just being a lookup table.
 
-   - A three-step "How it works" section (List your tools → Get your score → Get your certificate) with icons.
+This is a decision-support tool, not legal advice, and the reference dataset is intentionally curated and expected to grow over time rather than being exhaustive on day one.
 
-   - A section citing why this matters, referencing that most European cloud infrastructure is run by non-EU hyperscalers and that the EU is actively legislating on cloud/AI sovereignty (write real, non-generic supporting copy — do not invent specific statistics, phrase it qualitatively).
+---
 
-   - Footer with links to About and Privacy Policy.
+## Architecture
 
-2. "RUN A SCAN" PAGE
+```mermaid
+flowchart LR
+    U["User (browser)"] -->|"Lists their SaaS/cloud tools"| FE["SovereignGate Frontend\n(React + Tailwind, built in Lovable)"]
+    FE -->|"Read reference dataset"| DB[("Supabase Postgres\ntools_reference table\n(tool, category, jurisdiction, EU_alternative, risk_weight)")]
+    FE -->|"Compute score client-side\nfrom real matched rows"| SCORE["Live Scoring Engine\n(weighted rubric, transparent formula)"]
+    SCORE -->|"Matched tools + score payload"| EDGE["Supabase Edge Function\n(server-side, holds the LLM API key)"]
+    EDGE -->|"Live API call"| LLM["LLM API\n(Claude or GPT)"]
+    LLM -->|"Generated migration narrative\n(constrained to matched dataset only)"| EDGE
+    EDGE -->|"Report text"| FE
+    FE -->|"Renders"| CERT["Assurance Certificate view\n(score, breakdown, report, timestamp, exportable)"]
+    DB -.->|"submissions table\n(anonymous, per-session log)"| FE
+```
 
-   - A clean input where the user can type or paste a comma-separated list of tools their company uses (e.g. "AWS, Slack, Google Workspace, HubSpot").
+**Component summary**
 
-   - A "Run Assurance Scan" button.
+| Layer | Technology | Responsibility |
+|---|---|---|
+| Frontend | React, TypeScript, Tailwind CSS | UI, input handling, client-side score computation from matched rows, rendering results and certificate |
+| Database | Supabase (Postgres) | `tools_reference` table (curated dataset: tool, category, jurisdiction, EU alternative, risk weight, source note); `submissions` table (anonymous per-scan log) |
+| Backend logic | Supabase Edge Function | Receives the matched-tool payload, calls the LLM API server-side (API key never exposed to the browser), returns the generated report |
+| AI | LLM API (Claude / GPT) | Generates the plain-language Assurance Report, constrained to the verified dataset so it cannot recommend a nonexistent alternative |
 
-   - On submit, matches each tool against a reference dataset and shows: (a) an overall Sovereignty Score out of 100 as a large, clear radial/gauge visual, (b) a category breakdown (Cloud, Email, AI/LLM, Communications, CRM) as a horizontal bar chart, (c) a visible, readable explanation of the scoring formula (state the weights plainly, do not hide the math), (d) a per-tool list showing each tool, its detected jurisdiction, its risk level (color-coded using the palette above), and its suggested EU alternative.
+---
 
-3. AI ASSURANCE REPORT / CERTIFICATE PAGE
+## Tech stack
 
-   - After the scan, show a generated narrative report explaining, in plain language, the top 3 priority migrations and why, in the voice of a calm expert advisor — not a generic chatbot.
+- React + TypeScript
+- Tailwind CSS
+- Supabase (Postgres + Edge Functions)
+- LLM API (server-side call only)
+- Deployed via Lovable
 
-   - Display a formal "Digital Sovereignty Assurance Certificate" card: company/session identifier, score, date/time, and a short summary — styled like a real certificate (border, seal-style icon, serif headline), with a "Download as PDF" or "Export" action.
+---
 
-4. "HOW SCORING WORKS" PAGE
+## Getting started (local development)
 
-   - A fully written, non-generic explanation of the scoring rubric: what categories are weighted, why jurisdiction and data sensitivity matter, and a plain-language explanation connecting this to real EU sovereignty policy concepts (assurance levels based on control over infrastructure, data processing, and third-country exposure) — written as original explanatory copy, not copied text.
+### Prerequisites
 
-5. ABOUT PAGE
+- [Node.js](https://nodejs.org/) and npm — install via [nvm](https://github.com/nvm-sh/nvm#installing-and-updating) if you don't already have them
+- A [Supabase](https://supabase.com/) project (for the database and Edge Function)
+- An API key for your chosen LLM provider (used only inside the Edge Function, never in the frontend)
 
-   - A real, finished paragraph explaining who built this, why, and the honest scope/limitations of the tool (e.g., "reference dataset is curated and will grow over time; this is a decision-support tool, not legal advice").
-
-6. PRIVACY POLICY PAGE
-
-   - A complete, real privacy policy appropriate for a tool that accepts a list of company tool names and may log anonymous submissions: what data is collected (the tool list, timestamp), that no personal or account data is required, that no data is sold or shared with third parties, and how someone can request their submission be deleted. Full, finished text — not a placeholder.
-
-BACKEND:
-
-- Use Supabase. Create a `tools_reference` table (tool_name, category, jurisdiction, eu_alternative, risk_weight, source_note) and a `submissions` table (id, submitted_tools, computed_score, created_at).
-
-- Create a server-side Edge Function that takes the matched-tool payload and calls an LLM API to generate the narrative report — the API key must live server-side only, never in frontend code.
-
-- The scoring logic must be real, computed from the matched database rows every time — never a static/fixed number.
-
-Do not generate any fake "example results" pre-filled on the page. The scan should be genuinely empty/interactive until a real user runs it.
-
-This project was built with [Lovable](https://lovable.dev).
-
-**Live app**: https://euro-sovereign-scan.lovable.app
-
-## Build with Lovable
-
-Continue developing this project in the [Lovable editor](https://lovable.dev/projects/0159001c-0945-4684-acd4-1009a817a2a0).
-
-- **Ship faster**: describe what you want to build and Lovable handles the code.
-- **Stay in sync**: every change made in Lovable is committed straight to this repository.
-- **Full ownership**: this code is yours. Push to `main` on GitHub and your changes sync back into Lovable, ready for your next prompt.
-
-## Development
-
-Prefer working locally? You need Node.js and npm — [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating).
+### Setup
 
 ```sh
+# Clone the repository
 git clone <this-repository-url>
 cd <repository-name>
+
+# Install dependencies
 npm i
+
+# Configure environment variables
+# Create a .env file with your Supabase project URL and anon key:
+# VITE_SUPABASE_URL=your-supabase-project-url
+# VITE_SUPABASE_ANON_KEY=your-supabase-anon-key
+
+# Run the development server
 npm run dev
 ```
+
+### Database setup
+
+In your Supabase project, create the two tables the app depends on:
+
+**`tools_reference`**
+
+| Column | Type | Notes |
+|---|---|---|
+| `tool_name` | text | e.g. "AWS", "Slack" |
+| `category` | text | Cloud / Email / AI-LLM / Communications / CRM |
+| `jurisdiction` | text | Country/region the provider operates under |
+| `eu_alternative` | text | Verified EU-based alternative |
+| `risk_weight` | numeric | Used by the scoring formula |
+| `source_note` | text | Where the jurisdiction/alternative claim comes from |
+
+**`submissions`**
+
+| Column | Type | Notes |
+|---|---|---|
+| `id` | uuid | Primary key |
+| `submitted_tools` | text[] / jsonb | The tool list a user submitted |
+| `computed_score` | numeric | The resulting Sovereignty Score |
+| `created_at` | timestamp | Auto-set on insert |
+
+### Edge Function
+
+The report-generation Edge Function must:
+- Accept the matched-tool payload from the frontend
+- Call the LLM API using a key stored in the function's server-side environment/secrets — never in frontend code or committed to the repo
+- Return the generated report text to the frontend
+
+---
+
+## Scope and limitations
+
+- The reference dataset is curated, not exhaustive, and will expand over time.
+- This tool provides decision support, not legal, compliance, or regulatory advice.
+- Scoring weights are intentionally transparent and shown in-app rather than hidden — see the "How Scoring Works" page in the live app for the full explanation.
+
+---
+
+## Live app
+
+https://euro-sovereign-scan.lovable.app
